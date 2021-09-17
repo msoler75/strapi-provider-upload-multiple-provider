@@ -12,7 +12,7 @@ const baseProvider = {
   }
 }
 
-const { convertToStrapiError } = require('../../strapi-plugin-upload/errors')
+const { convertToStrapiError } = require('../strapi-plugin-upload/errors')
 
 const wrapFunctionForErrors = fn => async (...args) => {
   try {
