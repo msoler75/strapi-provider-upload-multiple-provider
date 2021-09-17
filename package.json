@@ -8,7 +8,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/msoler75/strapi-plugin-upload-multiple-provider.git"
+    "url": "git+https://github.com/msoler75/strapi-provider-upload-multiple-provider.git"
   },
   "keywords": [
     "strapi",
