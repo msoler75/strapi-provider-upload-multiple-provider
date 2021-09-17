@@ -4,6 +4,8 @@ Allow multiple upload providers in strapi.
 
 The selection of which provider to use is determined by a *selectProvider* function in settings with file information. Each provider is identified by *keyString*.
 
+Each provider plugin need to be installed.
+
 
 config/plugins.js:
 ```
@@ -15,12 +17,12 @@ upload: {
     },
     providers: {
       'key1' : {
-        provider: #providerName,
-        options: #providerOptions
+        provider: #providerName#,
+        options: #providerOptions#
       },
       'key2' : {
-        provider: #providerName,
-        options: #providerOptions
+        provider: #providerName#,
+        options: #providerOptions#
       },
       ...
     }  
