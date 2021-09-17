@@ -1,5 +1,5 @@
 {
-  "name": "strapi-plugin-upload-multiple-provider",
+  "name": "trapi-provider-upload-multiple-provider",
   "version": "1.0.0",
   "description": "Allow multiple and conditional upload providers for strapi",
   "main": "index.js",
