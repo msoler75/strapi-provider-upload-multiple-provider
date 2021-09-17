@@ -1,5 +1,5 @@
 {
-  "name": "trapi-provider-upload-multiple-provider",
+  "name": "strapi-provider-upload-multiple-provider",
   "version": "1.0.0",
   "description": "Allow multiple and conditional upload providers for strapi",
   "main": "index.js",
@@ -18,7 +18,7 @@
   "author": "Marcel Soler <msoler75@yahoo.es> (https://github.com/msoler75)",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/msoler75/strapi-plugin-upload-multiple-provider/issues"
+    "url": "https://github.com/msoler75/strapi-provider-upload-multiple-provider/issues"
   },
-  "homepage": "https://github.com/msoler75/strapi-plugin-upload-multiple-provider#readme"
+  "homepage": "https://github.com/msoler75/strapi-provider-upload-multiple-provider#readme"
 }
