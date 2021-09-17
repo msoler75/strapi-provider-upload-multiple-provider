@@ -15,7 +15,7 @@
     "upload",
     "plugin"
   ],
-  "author": "Marcel Soler",
+  "author": "Marcel Soler <msoler75@yahoo.es> (https://github.com/msoler75)",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/msoler75/strapi-plugin-upload-multiple-provider/issues"
