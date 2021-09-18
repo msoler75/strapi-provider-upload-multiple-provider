@@ -23,90 +23,74 @@ const wrapFunctionForErrors = fn => async (...args) => {
 }
 
 const getProviderData = (file, options) => {
-  console.log('getProviderData')
-  // console.log('file', file)
-  console.log('options', options)
-
-  if(!options.selectProvider || typeof options.selectProvider !== 'function')
-  {
-    strapi.log.error('selectProvider not found')
-    throw new Error(
-      `config must define a selectProvider function`
-    )
+  if (!options.selectProvider || typeof options.selectProvider !== 'function') {
+    const msg = `config must define a selectProvider function`
+    strapi.log.error(msg)
+    throw new Error(msg)
   }
 
+  let providerKey
   try {
-    const providerKey = options.selectProvider(file)
-    console.log('providerKey', providerKey)
-    try {
-      const p = options.providers[providerKey]
-      console.log('p=>', p)
-      try {
-        const providerInstance = require(`strapi-provider-upload-${p.provider}`).init(
-          p.options
-        )
-
-        console.log('provider instance created', providerInstance)
-
-        const providerFunctions = Object.assign(Object.create(baseProvider), {
-          ...providerInstance,
-          upload: wrapFunctionForErrors(file => {
-            console.log('going to call providerInstance.upload(file, options)')
-            console.log('options: ', options)
-            return providerInstance.upload(file, p.options)
-          }),
-          delete: wrapFunctionForErrors(file => {
-            return providerInstance.delete(file, p.options)
-          })
-        })
-
-        console.log('providerFunctions created', providerFunctions)
-
-        return { providerFunctions, providerOptions: p.options }
-      } catch (err) {
-        strapi.log.error(err)
-        throw new Error(
-          `The provider package isn't installed. Please run \`npm install strapi-provider-upload-${p.provider}\``
-        )
-      }
-    } catch (err) {
-      strapi.log.error(err)
-      throw new Error(
-        `The upload provider selector with key '${providerKey}' not found`
-      )
-    }
+    providerKey = options.selectProvider(file)
   } catch (err) {
+    const msg = `The function selectProvider generated error`
+    strapi.log.error(msg)
     strapi.log.error(err)
-    throw new Error(
-      `The function selectProvider generated error`
-    )
+    throw new Error(msg)
   }
+
+  if (!options.providers) {
+    const msg = `You must set providers object in providerOptions of config/plugins.js`
+    strapi.log.error(msg)
+    throw new Error(msg)
+  }
+
+  const p = options.providers[providerKey]
+  if (!p) {
+    const msg = `The upload provider selector with key '${providerKey}' not found`
+    strapi.log.error(msg)
+    throw new Error(msg)
+  }
+
+  let providerInstance
+  try {
+    providerInstance = require(`strapi-provider-upload-${p.provider}`).init(
+      p.options
+    )
+  } catch (err) {
+    const msg = `The provider package isn't installed. Please run \`npm install strapi-provider-upload-${p.provider}\``
+    strapi.log.error(msg)
+    throw new Error(msg)
+  }
+
+  const providerFunctions = Object.assign(Object.create(baseProvider), {
+    ...providerInstance,
+    upload: wrapFunctionForErrors(file => {
+      return providerInstance.upload(file, p.options)
+    }),
+    delete: wrapFunctionForErrors(file => {
+      return providerInstance.delete(file, p.options)
+    })
+  })
+
+  return { providerFunctions, providerOptions: p.options }
 }
 
 module.exports = {
   init (options) {
-
     return {
       upload (file) {
-        console.log('my provider.upload')
-        // console.log('file', file)
-        console.log('options', options)
         try {
           const { providerFunctions, providerOptions } = getProviderData(
             file,
             options
           )
-          console.log('going to upload')
-          console.log(providerOptions)
           return providerFunctions.upload(file, providerOptions)
         } catch (err) {
           return null
         }
       },
       delete (file) {
-        console.log('my provider.delete')
-        console.log('file', file)
-        console.log('options', options)
         try {
           const { providerFunctions, providerOptions } = getProviderData(
             file,
