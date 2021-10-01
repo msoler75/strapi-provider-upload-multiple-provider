@@ -6,6 +6,11 @@ The selection of which provider to use is determined by a *selectProvider* funct
 
 Each provider plugin need to be installed.
 
+## Installation
+
+`npm i strapi-provider-upload-multiple-provider`
+
+## Use
 
 config/plugins.js:
 ```
