@@ -1,6 +1,6 @@
 # Strapi Upload Multiple Provider
 
-Allow multiple upload providers in strapi.
+Allow multiple upload providers in strapi (v3)
 
 The selection of which provider to use is determined by a *selectProvider* function in settings with file information. Each provider is identified by *keyString*.
 
