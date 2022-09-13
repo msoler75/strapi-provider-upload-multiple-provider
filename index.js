@@ -12,13 +12,16 @@ const baseProvider = {
   }
 }
 
-const { convertToStrapiError } = require('../strapi-plugin-upload/errors')
+// removed reliance on strapi v3 api
+// const { convertToStrapiError } = require('../strapi-plugin-upload/errors')
 
 const wrapFunctionForErrors = fn => async (...args) => {
   try {
     return await fn(...args)
   } catch (err) {
-    throw convertToStrapiError(err)
+    // throw convertToStrapiError(err)
+    strapi.log.error(msg)
+    throw new Error(msg)
   }
 }
 
