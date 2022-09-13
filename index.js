@@ -69,10 +69,13 @@ const getProviderData = (file, options) => {
   const providerFunctions = Object.assign(Object.create(baseProvider), {
     ...providerInstance,
     upload: wrapFunctionForErrors(file => {
-      return providerInstance.upload(file, p.options)
+      return providerInstance.upload(file)
+    }),
+    uploadStream: wrapFunctionForErrors(file => {
+      return providerInstance.uploadStream(file)
     }),
     delete: wrapFunctionForErrors(file => {
-      return providerInstance.delete(file, p.options)
+      return providerInstance.delete(file)
     })
   })
 
@@ -88,7 +91,18 @@ module.exports = {
             file,
             options
           )
-          return providerFunctions.upload(file, providerOptions)
+          return providerFunctions.upload(file)
+        } catch (err) {
+          return null
+        }
+      },
+      uploadStream(file) {
+        try {
+          const { providerFunctions, providerOptions } = getProviderData(
+            file,
+            options
+          )
+          return providerFunctions.uploadStream(file)
         } catch (err) {
           return null
         }
@@ -99,7 +113,7 @@ module.exports = {
             file,
             options
           )
-          return providerFunctions.delete(file, providerOptions)
+          return providerFunctions.delete(file)
         } catch (err) {
           return null
         }
