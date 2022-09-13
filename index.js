@@ -20,8 +20,8 @@ const wrapFunctionForErrors = fn => async (...args) => {
     return await fn(...args)
   } catch (err) {
     // throw convertToStrapiError(err)
-    strapi.log.error(msg)
-    throw new Error(msg)
+    strapi.log.error(err)
+    throw new Error(err)
   }
 }
 
