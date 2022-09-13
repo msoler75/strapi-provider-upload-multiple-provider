@@ -57,11 +57,11 @@ const getProviderData = (file, options) => {
 
   let providerInstance
   try {
-    providerInstance = require(`strapi-provider-upload-${p.provider}`).init(
+    providerInstance = require(`${p.provider}`).init(
       p.options
     )
   } catch (err) {
-    const msg = `The provider package isn't installed. Please run \`npm install strapi-provider-upload-${p.provider}\``
+    const msg = `The provider package isn't installed. Please run \`npm install ${p.provider}\``
     strapi.log.error(msg)
     throw new Error(msg)
   }
