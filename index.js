@@ -71,9 +71,14 @@ const getProviderData = (file, options) => {
     upload: wrapFunctionForErrors(file => {
       return providerInstance.upload(file)
     }),
-    uploadStream: wrapFunctionForErrors(file => {
-      return providerInstance.uploadStream(file)
-    }),
+    // uploadStream: wrapFunctionForErrors(file => {
+    //  // needs its own implementation
+    //   if (providerInstance.uploadStream) {
+    //     return providerInstance.uploadStream(file)
+    //   } else {
+    //     return providerInstance.upload(file)
+    //   }
+    // }),
     delete: wrapFunctionForErrors(file => {
       return providerInstance.delete(file)
     })
