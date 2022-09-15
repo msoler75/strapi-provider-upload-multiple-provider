@@ -101,17 +101,17 @@ module.exports = {
           return null
         }
       },
-      uploadStream(file) {
-        try {
-          const { providerFunctions, providerOptions } = getProviderData(
-            file,
-            options
-          )
-          return providerFunctions.uploadStream(file)
-        } catch (err) {
-          return null
-        }
-      },
+      // uploadStream(file) {
+      //   try {
+      //     const { providerFunctions, providerOptions } = getProviderData(
+      //       file,
+      //       options
+      //     )
+      //     return providerFunctions.uploadStream(file)
+      //   } catch (err) {
+      //     return null
+      //   }
+      // },
       delete (file) {
         try {
           const { providerFunctions, providerOptions } = getProviderData(
