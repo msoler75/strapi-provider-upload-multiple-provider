@@ -1,5 +1,7 @@
 'use strict'
 
+import streamToArray from "stream-to-array";'stream-to-array';
+
 const baseProvider = {
   extend (obj) {
     Object.assign(this, obj)
@@ -71,14 +73,22 @@ const getProviderData = (file, options) => {
     upload: wrapFunctionForErrors(file => {
       return providerInstance.upload(file)
     }),
-    // uploadStream: wrapFunctionForErrors(file => {
-    //  // needs its own implementation
-    //   if (providerInstance.uploadStream) {
-    //     return providerInstance.uploadStream(file)
-    //   } else {
-    //     return providerInstance.upload(file)
-    //   }
-    // }),
+    uploadStream: wrapFunctionForErrors(file => {
+      if (providerInstance.uploadStream) {
+        return providerInstance.uploadStream(file)
+      } else {
+
+        // fall back on converting file stream to buffer and using existing
+        let buffer = streamToArray(file.stream).then(function (parts) {
+          const buffers = parts.map(part => util.isBuffer(part) ? part : Buffer.from(part));
+          return Buffer.concat(buffers);
+        });
+
+        let fileWithBuffer = Object.assign(file, {buffer: buffer});
+
+        return providerInstance.upload(fileWithBuffer)
+      }
+    }),
     delete: wrapFunctionForErrors(file => {
       return providerInstance.delete(file)
     })
@@ -101,17 +111,17 @@ module.exports = {
           return null
         }
       },
-      // uploadStream(file) {
-      //   try {
-      //     const { providerFunctions, providerOptions } = getProviderData(
-      //       file,
-      //       options
-      //     )
-      //     return providerFunctions.uploadStream(file)
-      //   } catch (err) {
-      //     return null
-      //   }
-      // },
+      uploadStream(file) {
+        try {
+          const { providerFunctions, providerOptions } = getProviderData(
+            file,
+            options
+          )
+          return providerFunctions.uploadStream(file)
+        } catch (err) {
+          return null
+        }
+      },
       delete (file) {
         try {
           const { providerFunctions, providerOptions } = getProviderData(
