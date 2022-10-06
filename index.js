@@ -1,6 +1,6 @@
 'use strict'
 
-import streamToArray from "stream-to-array";'stream-to-array';
+const streamToArray = require('stream-to-array');
 
 const baseProvider = {
   extend (obj) {
