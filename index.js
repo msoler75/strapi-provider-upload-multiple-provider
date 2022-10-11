@@ -77,7 +77,7 @@ const getProviderData = (file, options) => {
       if (providerInstance.uploadStream) {
         return providerInstance.uploadStream(file)
       } else {
-        // fall back on converting file stream to buffer and using existing
+        // fall back on converting file stream to buffer and using existing - will break on large files
         let buffer = await streamToArray(file.stream).then(function (parts) {
           const buffers = parts.map(part => Buffer.isBuffer(part) ? part : Buffer.from(part));
           return Buffer.concat(buffers);
