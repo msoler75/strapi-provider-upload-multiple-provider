@@ -1,5 +1,7 @@
 'use strict'
 
+const streamToArray = require('stream-to-array');
+
 const baseProvider = {
   extend (obj) {
     Object.assign(this, obj)
@@ -12,13 +14,16 @@ const baseProvider = {
   }
 }
 
-const { convertToStrapiError } = require('../strapi-plugin-upload/errors')
+// removed reliance on strapi v3 api
+// const { convertToStrapiError } = require('../strapi-plugin-upload/errors')
 
 const wrapFunctionForErrors = fn => async (...args) => {
   try {
     return await fn(...args)
   } catch (err) {
-    throw convertToStrapiError(err)
+    // throw convertToStrapiError(err)
+    strapi.log.error(err)
+    throw new Error(err)
   }
 }
 
@@ -54,11 +59,11 @@ const getProviderData = (file, options) => {
 
   let providerInstance
   try {
-    providerInstance = require(`strapi-provider-upload-${p.provider}`).init(
+    providerInstance = require(`${p.provider}`).init(
       p.options
     )
   } catch (err) {
-    const msg = `The provider package isn't installed. Please run \`npm install strapi-provider-upload-${p.provider}\``
+    const msg = `The provider package isn't installed. Please run \`npm install ${p.provider}\``
     strapi.log.error(msg)
     throw new Error(msg)
   }
@@ -66,10 +71,24 @@ const getProviderData = (file, options) => {
   const providerFunctions = Object.assign(Object.create(baseProvider), {
     ...providerInstance,
     upload: wrapFunctionForErrors(file => {
-      return providerInstance.upload(file, p.options)
+      return providerInstance.upload(file)
+    }),
+    uploadStream: wrapFunctionForErrors(async (file) => {
+      if (providerInstance.uploadStream) {
+        return providerInstance.uploadStream(file)
+      } else {
+        // fall back on converting file stream to buffer and using existing - will break on large files
+        let buffer = await streamToArray(file.stream).then(function (parts) {
+          const buffers = parts.map(part => Buffer.isBuffer(part) ? part : Buffer.from(part));
+          return Buffer.concat(buffers);
+        });
+        let fileWithBuffer = Object.assign(file, {buffer: buffer});
+
+        return providerInstance.upload(fileWithBuffer)
+      }
     }),
     delete: wrapFunctionForErrors(file => {
-      return providerInstance.delete(file, p.options)
+      return providerInstance.delete(file)
     })
   })
 
@@ -85,7 +104,18 @@ module.exports = {
             file,
             options
           )
-          return providerFunctions.upload(file, providerOptions)
+          return providerFunctions.upload(file)
+        } catch (err) {
+          return null
+        }
+      },
+      uploadStream(file) {
+        try {
+          const { providerFunctions, providerOptions } = getProviderData(
+            file,
+            options
+          )
+          return providerFunctions.uploadStream(file)
         } catch (err) {
           return null
         }
@@ -96,7 +126,7 @@ module.exports = {
             file,
             options
           )
-          return providerFunctions.delete(file, providerOptions)
+          return providerFunctions.delete(file)
         } catch (err) {
           return null
         }
